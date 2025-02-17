@@ -1,0 +1,15 @@
+how long would it take me to make a bj cli?
+make a deck
+calculate odds
+ect
+need to know:
+probability
+percision
+types of decks
+display that isn't whack
+betting
+dealer rules
+probability of win on a hit vs win on a stand (dealer has fixed rules)
+add other people at the table
+1, 6, 8, or custom decks for probability
+
