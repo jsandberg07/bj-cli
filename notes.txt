@@ -12,4 +12,6 @@ dealer rules
 probability of win on a hit vs win on a stand (dealer has fixed rules)
 add other people at the table
 1, 6, 8, or custom decks for probability
-
+add saving, record, progress just as a txt or json or something
+save winnings, records, and # of decks used
+give it a chec sum

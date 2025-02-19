@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"os"
-)
+import "strings"
 
 type Command int
 
@@ -13,14 +10,12 @@ const (
 )
 
 type Hand struct {
-	Name    string
 	Cards   []Card
 	Score   int
 	NumAces int
 }
 
-func (h *Hand) Init(name string) {
-	h.Name = name
+func (h *Hand) Init() {
 	h.Cards = []Card{}
 	h.Score = 0
 	h.NumAces = 0
@@ -55,46 +50,10 @@ func (h *Hand) IsBust() bool {
 	}
 }
 
-func (h *Hand) PrintHand() {
-	fmt.Println(h.Name)
-	fmt.Printf("Score: %v\n", h.Score)
+func (h *Hand) GetCards() string {
+	var output string
 	for _, c := range h.Cards {
-		c.Print()
-		fmt.Print(" ")
+		output += c.GetString() + " "
 	}
-	fmt.Println()
-}
-
-// temp for player making choice
-// TODO: handle this gracefully
-func (h *Hand) GetPlayerChoice() Command {
-	choice, err := getInput()
-	if err != nil {
-		fmt.Printf("Error getting input -- %s", err)
-		os.Exit(1)
-	}
-	switch choice {
-	case "stand":
-		fallthrough
-	case "s":
-		fmt.Println("stand")
-		return CommandStand
-	case "hit":
-		fallthrough
-	case "h":
-		fmt.Println("hit")
-		return CommandHit
-	default:
-		fmt.Println("Default in MakePlayerChoice")
-		return CommandStand
-	}
-}
-
-// temp for dealer making choice
-func (h *Hand) MakeDealerChoice() Command {
-	if h.Score < dealerTarget {
-		return CommandHit
-	} else {
-		return CommandStand
-	}
+	return strings.TrimSpace(output)
 }

@@ -35,8 +35,8 @@ func TestCompare(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		gs.Player.Score = test.PlayerScore
-		gs.Dealer.Score = test.DealerScore
+		gs.Player.Hand.Score = test.PlayerScore
+		gs.Dealer.Hand.Score = test.DealerScore
 		result := gs.CompareHands()
 		if result != test.ExpectedResult {
 

@@ -23,7 +23,7 @@ func (d *Deck) Reset() {
 
 func (d *Deck) Print() {
 	for _, c := range d.Cards {
-		c.Print()
+		fmt.Println(c.GetString())
 		fmt.Print(" ")
 	}
 }

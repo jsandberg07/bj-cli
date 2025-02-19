@@ -34,7 +34,7 @@ type Card struct {
 	Face
 }
 
-func (c *Card) Print() {
+func (c *Card) GetString() string {
 	p := make([]byte, 2)
 	switch c.Face {
 	case FaceAce:
@@ -77,7 +77,7 @@ func (c *Card) Print() {
 		p[1] = 'D'
 	default:
 	}
-	fmt.Print(string(p))
+	return string(p)
 }
 
 func (c *Card) IsAce() bool {

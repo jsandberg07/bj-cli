@@ -19,16 +19,16 @@ const (
 // blackjack pays 3 to 2
 
 type Gamestate struct {
-	Player Hand
-	Dealer Hand
+	Player Player
+	Dealer Dealer
 	Deck   Deck
 }
 
 func (gs *Gamestate) Init() {
-	gs.Player = Hand{}
+	gs.Player = Player{}
 	gs.Player.Init("Player")
 
-	gs.Dealer = Hand{}
+	gs.Dealer = Dealer{}
 	gs.Dealer.Init("Dealer")
 
 	gs.Deck = Deck{}
@@ -41,13 +41,16 @@ func (gs *Gamestate) Reset() {
 	gs.Deck.Shuffle()
 }
 
-func (gs *Gamestate) Print() {
-	gs.Dealer.PrintHand()
-	gs.Player.PrintHand()
+// how do we format it
+// figure that out, and how to transplant strings
+func (gs *Gamestate) Print() string {
+	ps := gs.Player.Print()
+	ds := gs.Dealer.Print()
+	return printPlayers([][]string{ps, ds})
 }
 
 func (gs *Gamestate) CompareHands() Result {
-	switch cmp.Compare[int](gs.Player.Score, gs.Dealer.Score) {
+	switch cmp.Compare[int](gs.Player.Hand.Score, gs.Dealer.Hand.Score) {
 	case -1:
 		return ResultLose
 	case 0:
@@ -68,21 +71,24 @@ func (gs *Gamestate) PlayRound() Result {
 		gs.Dealer.TakeCard(gs.Deck.Deal())
 	}
 	// print
-	gs.Print()
+	fmt.Print(gs.Print())
 	// ask the player if he wants to hit or stand
 	playerStand := false
 	for {
+		fmt.Printf("Score: %v\n", gs.Player.GetScore())
 		cmd := gs.Player.GetPlayerChoice()
 		switch cmd {
 		case CommandHit:
 			gs.Player.TakeCard(gs.Deck.Deal())
-			gs.Player.PrintHand()
 		case CommandStand:
 			playerStand = true
 		default:
 			fmt.Println("Default found in Play")
 			playerStand = true
 		}
+
+		fmt.Print(gs.Print())
+
 		if gs.Player.IsBust() {
 			return ResultLose
 		}
@@ -93,11 +99,10 @@ func (gs *Gamestate) PlayRound() Result {
 	// if hit, deal card, calc bust, check if lose
 	dealerStand := false
 	for {
-		cmd := gs.Dealer.MakeDealerChoice()
+		cmd := gs.Dealer.MakeChoice()
 		switch cmd {
 		case CommandHit:
 			gs.Dealer.TakeCard(gs.Deck.Deal())
-			gs.Dealer.PrintHand()
 		case CommandStand:
 			dealerStand = true
 		default:
@@ -112,5 +117,8 @@ func (gs *Gamestate) PlayRound() Result {
 		}
 
 	}
+	fmt.Print(gs.Print())
+	fmt.Printf("Score: %v\n", gs.Player.GetScore())
+
 	return gs.CompareHands()
 }
