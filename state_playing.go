@@ -50,7 +50,7 @@ func (gs *Gamestate) PlayRound() Result {
 	// ask the player if he wants to hit or stand
 	playerStand := false
 	for {
-		fmt.Printf("Score: %v\n", gs.P.GetScore())
+		fmt.Printf("Score: %v\n", gs.P.Hand.Score)
 		cmd := gs.P.GetPlayerChoice()
 		switch cmd {
 		case CommandHit:
@@ -65,7 +65,7 @@ func (gs *Gamestate) PlayRound() Result {
 		fmt.Print(gs.Print())
 
 		if gs.P.IsBust() {
-			fmt.Printf("Bust! - %v\n", gs.P.GetScore())
+			fmt.Printf("Bust! - %v\n", gs.P.Hand.Score)
 			return ResultLose
 		}
 		if playerStand {
@@ -94,13 +94,13 @@ func (gs *Gamestate) PlayRound() Result {
 
 	}
 	fmt.Print(gs.Print())
-	fmt.Printf("Score: %v\n", gs.P.GetScore())
+	fmt.Printf("Score: %v\n", gs.P.Hand.Score)
 
 	return gs.CompareHands()
 }
 
 func (gs *Gamestate) CompareHands() Result {
-	fmt.Printf("%v - %v\n", gs.P.GetScore(), gs.D.Hand.Score)
+	fmt.Printf("%v - %v\n", gs.P.Hand.Score, gs.D.Hand.Score)
 	switch cmp.Compare[int](gs.P.Hand.Score, gs.D.Hand.Score) {
 	case -1:
 		return ResultLose

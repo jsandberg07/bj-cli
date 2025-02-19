@@ -59,14 +59,6 @@ func (p *Player) Reset() {
 	p.Hand.Reset()
 }
 
-func (p *Player) GetScore() int {
-	total := 0
-	for _, c := range p.Hand.Cards {
-		total += c.GetValue()
-	}
-	return total
-}
-
 // return lines that the game state will format
 // name
 // hand
