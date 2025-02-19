@@ -1,9 +1,6 @@
 package main
 
-import (
-	"cmp"
-	"fmt"
-)
+import "fmt"
 
 const scoreTarget = 21
 
@@ -18,107 +15,100 @@ const (
 
 // blackjack pays 3 to 2
 
+// state needs properties
+// logic
+// just use state enum and a switch
+// everything else can be kept and changed as needed
+// and the state just points to the logic and render
+
+type State struct {
+	Logic func(gs *Gamestate)
+	Print func(gs *Gamestate)
+}
+
 type Gamestate struct {
-	Player Player
-	Dealer Dealer
-	Deck   Deck
+	S       *State
+	NS      *State
+	P       Player
+	D       Dealer
+	Deck    Deck
+	Playing bool
+}
+
+func (gs *Gamestate) Logic() {
+	gs.S.Logic(gs)
 }
 
 func (gs *Gamestate) Init() {
-	gs.Player = Player{}
-	gs.Player.Init("Player")
-
-	gs.Dealer = Dealer{}
-	gs.Dealer.Init("Dealer")
-
-	gs.Deck = Deck{}
-	gs.Deck.Init()
+	// set variables
+	gs.Playing = true
+	gs.P = Player{}
+	gs.D = Dealer{}
+	gs.S = gs.getMainMenuState()
 }
 
 func (gs *Gamestate) Reset() {
-	gs.Player.Reset()
-	gs.Dealer.Reset()
+	gs.P.Reset()
+	gs.D.Reset()
 	gs.Deck.Shuffle()
+}
+
+func (gs *Gamestate) Run() {
+	for {
+		gs.Logic()
+		gs.Print()
+		gs.CheckNextState()
+		if !gs.Playing {
+			return
+		}
+	}
+
 }
 
 // how do we format it
 // figure that out, and how to transplant strings
 func (gs *Gamestate) Print() string {
-	ps := gs.Player.Print()
-	ds := gs.Dealer.Print()
+	ps := gs.P.Print()
+	ds := gs.D.Print()
 	return printPlayers([][]string{ps, ds})
 }
 
-func (gs *Gamestate) CompareHands() Result {
-	switch cmp.Compare[int](gs.Player.Hand.Score, gs.Dealer.Hand.Score) {
-	case -1:
-		return ResultLose
-	case 0:
-		return ResultDraw
-	case 1:
-		return ResultWin
-	default:
-		fmt.Println("Default in CompareHands")
-		return ResultError
+func (gs *Gamestate) SetNextState(s *State) {
+	fmt.Println()
+	gs.NS = s
+}
+
+func (gs *Gamestate) CheckNextState() {
+	if gs.NS != nil {
+		gs.S = gs.NS
+		gs.NS = nil
 	}
 }
 
-func (gs *Gamestate) PlayRound() Result {
-	// deal two cards to the player
-	// deal two cards to the dealer
-	for i := 0; i < 2; i++ {
-		gs.Player.TakeCard(gs.Deck.Deal())
-		gs.Dealer.TakeCard(gs.Deck.Deal())
-	}
-	// print
-	fmt.Print(gs.Print())
-	// ask the player if he wants to hit or stand
-	playerStand := false
-	for {
-		fmt.Printf("Score: %v\n", gs.Player.GetScore())
-		cmd := gs.Player.GetPlayerChoice()
-		switch cmd {
-		case CommandHit:
-			gs.Player.TakeCard(gs.Deck.Deal())
-		case CommandStand:
-			playerStand = true
-		default:
-			fmt.Println("Default found in Play")
-			playerStand = true
-		}
+// lets create some states
+// without knowing what to do lmao
+// so we have a state
+// we have logic
+// we render
+// the state is state is a command.logic
+// and .render which we pretty much have
+// i want a start menu to save + load + new game
+// playing the game
+// and a menu for saving + betting + quitting
+// problem is state making changes to base state functions
+// so we have to transfer them
+// imagine actually making a game
 
-		fmt.Print(gs.Print())
+// so we have
+// GS{Menu} logic -> get input and switch it, render -> is what you expect
+// too bad go isn't OOP and doesnt have inhertiance
+// but the basis is state->logic which pokes members then ->render which renders it
+// how do we switch states?
+// i guess create a new state and make it the next one, then swap
+// but where do we store the important like deck before it's created
 
-		if gs.Player.IsBust() {
-			return ResultLose
-		}
-		if playerStand {
-			break
-		}
-	}
-	// if hit, deal card, calc bust, check if lose
-	dealerStand := false
-	for {
-		cmd := gs.Dealer.MakeChoice()
-		switch cmd {
-		case CommandHit:
-			gs.Dealer.TakeCard(gs.Deck.Deal())
-		case CommandStand:
-			dealerStand = true
-		default:
-			fmt.Println("Default found in Play")
-			dealerStand = true
-		}
-		if gs.Dealer.IsBust() {
-			return ResultWin
-		}
-		if dealerStand {
-			break
-		}
-
-	}
-	fmt.Print(gs.Print())
-	fmt.Printf("Score: %v\n", gs.Player.GetScore())
-
-	return gs.CompareHands()
+func (gs *Gamestate) Cleanup() {
+	gs.Deck.Reset()
+	gs.P.Reset()
+	gs.D.Reset()
 }

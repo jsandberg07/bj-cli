@@ -6,8 +6,10 @@ import (
 )
 
 type Player struct {
-	Name string
-	Hand Hand
+	Name  string
+	Hand  Hand
+	Money int
+	Bet   int
 }
 
 func (p *Player) TakeCard(c Card) {
@@ -48,6 +50,8 @@ func (p *Player) GetPlayerChoice() Command {
 
 func (p *Player) Init(name string) {
 	p.Name = name
+	p.Money = 200
+	p.Bet = 0
 	p.Hand.Init()
 }
 
@@ -85,4 +89,19 @@ func (p *Player) Print() []string {
 
 	strings := []string{printName, printCards}
 	return strings
+}
+
+func (p *Player) Win() {
+	p.Money += 2 * p.Bet
+	fmt.Println("You win!")
+}
+
+func (p *Player) Draw() {
+	p.Money += p.Bet
+	fmt.Println("Draw!")
+}
+
+func (p *Player) Lose() {
+	p.Money -= p.Bet
+	fmt.Println("You lose!")
 }

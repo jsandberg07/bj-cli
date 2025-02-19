@@ -117,10 +117,10 @@ func TestPrintingPlayers(t *testing.T) {
 	gs := Gamestate{}
 	gs.Init()
 	// give cards
-	gs.Player.TakeCard(cards[0])
-	gs.Player.TakeCard(cards[1])
-	gs.Dealer.TakeCard(cards[2])
-	gs.Dealer.TakeCard(cards[3])
+	gs.P.TakeCard(cards[0])
+	gs.P.TakeCard(cards[1])
+	gs.D.TakeCard(cards[2])
+	gs.D.TakeCard(cards[3])
 
 	// better to go line by line
 	output := gs.Print()
