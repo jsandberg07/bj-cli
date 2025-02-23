@@ -27,13 +27,14 @@ type State struct {
 }
 
 type Gamestate struct {
-	S       *State
-	NS      *State
-	Player  Player
-	Dealer  Dealer
-	Bots    []Bot
-	Deck    Deck
-	Playing bool
+	S        *State
+	NS       *State
+	Player   Player
+	Dealer   Dealer
+	Bots     []Bot
+	Deck     Deck
+	NumDecks int
+	Playing  bool
 }
 
 func (gs *Gamestate) Logic() {

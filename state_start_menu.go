@@ -50,6 +50,26 @@ func mainMenuLogic(gs *Gamestate) {
 		break
 	}
 
+	fmt.Println("Enter number of decks used by dealer")
+	for {
+		num, err := getInput()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		if num == "" {
+			gs.NumDecks = 1
+			break
+		}
+		decks, err := strconv.Atoi(num)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		gs.NumDecks = decks
+		break
+	}
+
 	gs.SetNextState(gs.getNewGameState())
 }
 

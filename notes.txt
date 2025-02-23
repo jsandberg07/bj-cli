@@ -17,9 +17,12 @@ save winnings, records, and # of decks used
 give it a chec sum
 
 add a uhh unrecognized h or s to repeat instead of default
-add probabilioty
-add hidden cards
-add another player
+add probabilioty X
+add hidden cards x
+add another player x
 add multiple decks
 add saves + loading
 add a goal
+add guessing cards
+add help
+cleanup

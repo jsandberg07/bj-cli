@@ -10,9 +10,9 @@ type Deck struct {
 	Cards   []Card
 }
 
-func (d *Deck) Init() {
+func (d *Deck) Init(num int) {
 	d.TopCard = 0
-	d.NewDeck()
+	d.NewDeck(num)
 	d.Shuffle()
 }
 
@@ -38,7 +38,7 @@ func (d *Deck) Shuffle() {
 }
 
 // create a single deck with 52 cards
-func (d *Deck) NewDeck() {
+func (d *Deck) NewDeck(numDecks int) {
 	faces := []Face{FaceAce, FaceTwo, FaceThree, FaceFour, FaceFive, FaceSix, FaceSeven, FaceEight, FaceNine, FaceTen, FaceJack, FaceQueen, FaceKing}
 	suits := []Suit{SuitSpade, SuitClub, SuitHeart, SuitDiamond}
 
@@ -55,7 +55,17 @@ func (d *Deck) NewDeck() {
 		}
 	}
 
-	d.Cards = newDeck
+	if numDecks == 1 {
+		d.Cards = newDeck
+		return
+	}
+
+	// for several decks
+	decks := []Card{}
+	for i := 0; i < numDecks; i++ {
+		decks = append(decks, newDeck...)
+	}
+	d.Cards = decks
 }
 
 // deal cards
