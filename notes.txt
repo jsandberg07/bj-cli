@@ -15,3 +15,11 @@ add other people at the table
 add saving, record, progress just as a txt or json or something
 save winnings, records, and # of decks used
 give it a chec sum
+
+add a uhh unrecognized h or s to repeat instead of default
+add probabilioty
+add hidden cards
+add another player
+add multiple decks
+add saves + loading
+add a goal

@@ -48,7 +48,7 @@ func (gs *Gamestate) Init() {
 }
 
 func (gs *Gamestate) Reset() {
-	gs.P.Reset()
+	gs.P.Reset(1)
 	gs.D.Reset()
 	gs.Deck.Shuffle()
 }
@@ -85,6 +85,12 @@ func (gs *Gamestate) CheckNextState() {
 	}
 }
 
+func (gs *Gamestate) Deal() Card {
+	card := gs.Deck.Deal()
+	gs.P.Probability.RemoveCard(card.GetValue())
+	return card
+}
+
 // lets create some states
 // without knowing what to do lmao
 // so we have a state
@@ -109,6 +115,6 @@ func (gs *Gamestate) CheckNextState() {
 
 func (gs *Gamestate) Cleanup() {
 	gs.Deck.Reset()
-	gs.P.Reset()
+	gs.P.Reset(1)
 	gs.D.Reset()
 }

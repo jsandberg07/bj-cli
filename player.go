@@ -6,10 +6,11 @@ import (
 )
 
 type Player struct {
-	Name  string
-	Hand  Hand
-	Money int
-	Bet   int
+	Probability Probability
+	Name        string
+	Hand        Hand
+	Money       int
+	Bet         int
 }
 
 func (p *Player) TakeCard(c Card) {
@@ -26,25 +27,26 @@ func (p *Player) IsBust() bool {
 
 // TODO: handle input error gracefully
 func (p *Player) GetPlayerChoice() Command {
-	choice, err := getInput()
-	if err != nil {
-		fmt.Printf("Error getting input -- %s", err)
-		os.Exit(1)
-	}
-	switch choice {
-	case "stand":
-		fallthrough
-	case "s":
-		fmt.Println("stand")
-		return CommandStand
-	case "hit":
-		fallthrough
-	case "h":
-		fmt.Println("hit")
-		return CommandHit
-	default:
-		fmt.Println("Default in MakePlayerChoice")
-		return CommandStand
+	for {
+		choice, err := getInput()
+		if err != nil {
+			fmt.Printf("Error getting input -- %s", err)
+			os.Exit(1)
+		}
+		switch choice {
+		case "stand":
+			fallthrough
+		case "s":
+			fmt.Println("stand")
+			return CommandStand
+		case "hit":
+			fallthrough
+		case "h":
+			fmt.Println("hit")
+			return CommandHit
+		default:
+			fmt.Println("Unrecognized command")
+		}
 	}
 }
 
@@ -53,10 +55,12 @@ func (p *Player) Init(name string) {
 	p.Money = 200
 	p.Bet = 0
 	p.Hand.Init()
+	p.Probability.Init(1)
 }
 
-func (p *Player) Reset() {
+func (p *Player) Reset(numDecks int) {
 	p.Hand.Reset()
+	p.Probability.Reset(numDecks)
 }
 
 // return lines that the game state will format
@@ -93,6 +97,7 @@ func (p *Player) Draw() {
 	fmt.Println("Draw!")
 }
 
+// add check to see if you lose all your cash then exit
 func (p *Player) Lose() {
 	p.Money -= p.Bet
 	fmt.Println("You lose!")

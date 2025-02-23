@@ -116,6 +116,9 @@ func TestPrintingPlayers(t *testing.T) {
 	// new gs
 	gs := Gamestate{}
 	gs.Init()
+
+	gs.P.Init("Player")
+	gs.D.Init("Dealer")
 	// give cards
 	gs.P.TakeCard(cards[0])
 	gs.P.TakeCard(cards[1])

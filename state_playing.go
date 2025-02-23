@@ -39,14 +39,18 @@ func PlayingPrint(gs *Gamestate) {
 }
 
 func (gs *Gamestate) PlayRound() Result {
+
 	// deal two cards to the player
 	// deal two cards to the dealer
 	for i := 0; i < 2; i++ {
-		gs.P.TakeCard(gs.Deck.Deal())
-		gs.D.TakeCard(gs.Deck.Deal())
+		gs.P.TakeCard(gs.Deal())
+		gs.D.TakeCard(gs.Deal())
 	}
 	// print
 	fmt.Print(gs.Print())
+	// print probability
+	toTarget, toBust := gs.P.Probability.GetOdds(gs.P.Hand.Score)
+	fmt.Printf("To Target: %.3f - To Bust: %.3f\n", toTarget, toBust)
 	// ask the player if he wants to hit or stand
 	playerStand := false
 	for {
@@ -54,7 +58,7 @@ func (gs *Gamestate) PlayRound() Result {
 		cmd := gs.P.GetPlayerChoice()
 		switch cmd {
 		case CommandHit:
-			gs.P.TakeCard(gs.Deck.Deal())
+			gs.P.TakeCard(gs.Deal())
 		case CommandStand:
 			playerStand = true
 		default:
@@ -78,7 +82,7 @@ func (gs *Gamestate) PlayRound() Result {
 		cmd := gs.D.MakeChoice()
 		switch cmd {
 		case CommandHit:
-			gs.D.TakeCard(gs.Deck.Deal())
+			gs.D.TakeCard(gs.Deal())
 		case CommandStand:
 			dealerStand = true
 		default:
@@ -86,6 +90,8 @@ func (gs *Gamestate) PlayRound() Result {
 			dealerStand = true
 		}
 		if gs.D.IsBust() {
+			fmt.Print(gs.Print())
+			fmt.Println("Dealer busts!")
 			return ResultWin
 		}
 		if dealerStand {
@@ -99,6 +105,7 @@ func (gs *Gamestate) PlayRound() Result {
 	return gs.CompareHands()
 }
 
+// todo: remove the print by returning a string and deciding what to do with it in the call
 func (gs *Gamestate) CompareHands() Result {
 	fmt.Printf("%v - %v\n", gs.P.Hand.Score, gs.D.Hand.Score)
 	switch cmp.Compare[int](gs.P.Hand.Score, gs.D.Hand.Score) {
