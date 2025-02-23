@@ -117,13 +117,13 @@ func TestPrintingPlayers(t *testing.T) {
 	gs := Gamestate{}
 	gs.Init()
 
-	gs.P.Init("Player")
-	gs.D.Init("Dealer")
+	gs.Player.Init("Player")
+	gs.Dealer.Init("Dealer")
 	// give cards
-	gs.P.TakeCard(cards[0])
-	gs.P.TakeCard(cards[1])
-	gs.D.TakeCard(cards[2])
-	gs.D.TakeCard(cards[3])
+	gs.Player.TakeCard(cards[0])
+	gs.Player.TakeCard(cards[1])
+	gs.Dealer.TakeCard(cards[2])
+	gs.Dealer.TakeCard(cards[3])
 
 	// better to go line by line
 	output := gs.Print()
@@ -139,4 +139,71 @@ func TestPrintingPlayers(t *testing.T) {
 			t.Fatalf("Compare strings: \nE:--%s--\nO:--%s--", splitExpected[i], splitOutput[i])
 		}
 	}
+}
+
+func TestPrintingBots(t *testing.T) {
+	c1 := Card{
+		Suit: SuitSpade,
+		Face: FaceAce,
+	}
+	c2 := Card{
+		Suit: SuitDiamond,
+		Face: FaceTwo,
+	}
+	c3 := Card{
+		Suit: SuitHeart,
+		Face: FaceThree,
+	}
+	c4 := Card{
+		Suit: SuitClub,
+		Face: FaceFour,
+	}
+	c5 := Card{
+		Suit: SuitSpade,
+		Face: FaceFive,
+	}
+	c6 := Card{
+		Suit: SuitDiamond,
+		Face: FaceSix,
+	}
+	c7 := Card{
+		Suit: SuitHeart,
+		Face: FaceSeven,
+	}
+	c8 := Card{
+		Suit: SuitClub,
+		Face: FaceEight,
+	}
+	// AS 2D 3H 4C 5S 6D 7H 8C
+	cards := []Card{c1, c2, c3, c4, c5, c6, c7, c8}
+
+	gs := Gamestate{}
+	gs.Init()
+	gs.Player.Init("Player")
+	gs.Dealer.Init("Dealer")
+	gs.AddBots(2)
+
+	gs.Player.TakeCard(cards[0])
+	gs.Player.TakeCard(cards[1])
+	gs.Dealer.TakeCard(cards[2])
+	gs.Dealer.TakeCard(cards[3])
+	gs.Bots[0].TakeCard(cards[4])
+	gs.Bots[0].TakeCard(cards[5])
+	gs.Bots[1].TakeCard(cards[6])
+	gs.Bots[1].TakeCard(cards[7])
+
+	output := gs.Print()
+	splitOutput := strings.Split(output, "\n")
+	expected := "|Player|Dealer|Bot 1|Bot 2|\n|AS 2D |3H 4C |5S 6D|7H 8C|\n"
+	splitExpected := strings.Split(expected, "\n")
+
+	if len(splitOutput) != len(splitExpected) {
+		t.Fatalf("Different number of lines: E: %v, O: %v", len(splitExpected), len(splitOutput))
+	}
+	for i := 0; i < len(splitExpected); i++ {
+		if splitExpected[i] != splitOutput[i] {
+			t.Fatalf("Compare strings: \nE:--%s--\nO:--%s--", splitExpected[i], splitOutput[i])
+		}
+	}
+
 }

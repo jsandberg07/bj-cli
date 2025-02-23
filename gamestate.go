@@ -29,8 +29,9 @@ type State struct {
 type Gamestate struct {
 	S       *State
 	NS      *State
-	P       Player
-	D       Dealer
+	Player  Player
+	Dealer  Dealer
+	Bots    []Bot
 	Deck    Deck
 	Playing bool
 }
@@ -42,14 +43,14 @@ func (gs *Gamestate) Logic() {
 func (gs *Gamestate) Init() {
 	// set variables
 	gs.Playing = true
-	gs.P = Player{}
-	gs.D = Dealer{}
+	gs.Player = Player{}
+	gs.Dealer = Dealer{}
 	gs.S = gs.getMainMenuState()
 }
 
 func (gs *Gamestate) Reset() {
-	gs.P.Reset(1)
-	gs.D.Reset()
+	gs.Player.Reset(1)
+	gs.Dealer.Reset()
 	gs.Deck.Shuffle()
 }
 
@@ -68,9 +69,14 @@ func (gs *Gamestate) Run() {
 // how do we format it
 // figure that out, and how to transplant strings
 func (gs *Gamestate) Print() string {
-	ps := gs.P.Print()
-	ds := gs.D.Print()
-	return printPlayers([][]string{ps, ds})
+	p := [][]string{}
+	p = append(p, gs.Player.Print())
+	p = append(p, gs.Dealer.Print())
+	for _, b := range gs.Bots {
+		p = append(p, b.Print())
+	}
+
+	return printPlayers(p)
 }
 
 func (gs *Gamestate) SetNextState(s *State) {
@@ -88,15 +94,21 @@ func (gs *Gamestate) CheckNextState() {
 func (gs *Gamestate) Deal(v Visible) Card {
 	card := gs.Deck.Deal(v)
 	if v == VisibleFaceup {
-		gs.P.Probability.RemoveCard(card.GetValue())
+		gs.Player.Probability.RemoveCard(card.GetValue())
 	}
 	return card
 }
 
 // OOP was a mistake
+// OOP WAS A MISTAKE. Make literally every . something a function lmao
 func (gs *Gamestate) FlipCards() {
-	for i := 0; i < len(gs.D.Hand.Cards); i++ {
-		gs.D.Hand.Cards[i].Visible = VisibleFaceup
+	for i := 0; i < len(gs.Dealer.Hand.Cards); i++ {
+		gs.Dealer.Hand.Cards[i].Visible = VisibleFaceup
+	}
+	for i := 0; i < len(gs.Bots); i++ {
+		for j := 0; j < len(gs.Bots[i].Hand.Cards); j++ {
+			gs.Bots[i].Hand.Cards[j].Visible = VisibleFaceup
+		}
 	}
 }
 
@@ -124,6 +136,21 @@ func (gs *Gamestate) FlipCards() {
 
 func (gs *Gamestate) Cleanup() {
 	gs.Deck.Reset()
-	gs.P.Reset(1)
-	gs.D.Reset()
+	gs.Player.Reset(1)
+	gs.Dealer.Reset()
+	for i := 0; i < len(gs.Bots); i++ {
+		gs.Bots[i].Reset()
+	}
+}
+
+func (gs *Gamestate) AddBots(num int) {
+	if num == 0 {
+		return
+	}
+
+	for i := 0; i < num; i++ {
+		bot := Bot{}
+		bot.Init(fmt.Sprintf("Bot %v", i+1))
+		gs.Bots = append(gs.Bots, bot)
+	}
 }

@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func (gs *Gamestate) getMainMenuState() *State {
 	s := State{
@@ -12,20 +15,39 @@ func (gs *Gamestate) getMainMenuState() *State {
 
 func mainMenuLogic(gs *Gamestate) {
 	fmt.Println("Enter player name")
-	var name string
-	var err error
 	for {
-		name, err = getInput()
+		name, err := getInput()
 		if err != nil {
 			fmt.Println(err)
+			continue
 		}
 		if name == "" {
 			fmt.Println("No name found")
 			continue
 		} else {
-			gs.P.Init(name)
+			gs.Player.Init(name)
 			break
 		}
+	}
+
+	fmt.Println("Enter number of bots")
+	for {
+		num, err := getInput()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		if num == "" {
+			gs.AddBots(0)
+			break
+		}
+		bots, err := strconv.Atoi(num)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		gs.AddBots(bots)
+		break
 	}
 
 	gs.SetNextState(gs.getNewGameState())

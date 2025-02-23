@@ -14,7 +14,7 @@ func (gs *Gamestate) getBettingState() *State {
 }
 
 func BettingLogic(gs *Gamestate) {
-	fmt.Printf("You have $%v\n", gs.P.Money)
+	fmt.Printf("You have $%v\n", gs.Player.Money)
 	fmt.Println("Enter amount to bet or 'exit' to quit")
 	for {
 		input, err := getInput()
@@ -35,12 +35,12 @@ func BettingLogic(gs *Gamestate) {
 			fmt.Println("Can't wager nothing")
 			continue
 		}
-		if bet > gs.P.Money {
+		if bet > gs.Player.Money {
 			fmt.Println("Can't wager more than you have")
 			continue
 		}
 
-		gs.P.Bet = bet
+		gs.Player.Bet = bet
 		break
 	}
 

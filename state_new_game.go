@@ -13,7 +13,7 @@ func (gs *Gamestate) getNewGameState() *State {
 }
 
 func mainNewGameLogic(gs *Gamestate) {
-	gs.D.Init("Dealer")
+	gs.Dealer.Init("Dealer")
 	gs.Deck.Init()
 	gs.SetNextState(gs.getBettingState())
 }

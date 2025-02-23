@@ -18,11 +18,11 @@ func PlayingLogic(gs *Gamestate) {
 	result := gs.PlayRound()
 	switch result {
 	case ResultWin:
-		gs.P.Win()
+		gs.Player.Win()
 	case ResultDraw:
-		gs.P.Draw()
+		gs.Player.Draw()
 	case ResultLose:
-		gs.P.Lose()
+		gs.Player.Lose()
 	default:
 		fmt.Println("Default in playing logic!")
 		os.Exit(1)
@@ -38,30 +38,37 @@ func PlayingPrint(gs *Gamestate) {
 
 }
 
+// TODO: encapsulate behavior in like player.turn() and bot.turn()
 func (gs *Gamestate) PlayRound() Result {
 
 	// deal two cards to the player
 	for i := 0; i < 2; i++ {
-		gs.P.TakeCard(gs.Deal(VisibleFaceup))
+		gs.Player.TakeCard(gs.Deal(VisibleFaceup))
 	}
 	// deal two cards to the dealer, one face up and one face down
 	for i := 0; i < 1; i++ {
-		gs.D.TakeCard(gs.Deal(VisibleFaceup))
-		gs.D.TakeCard(gs.Deal(VisibleFacedown))
+		gs.Dealer.TakeCard(gs.Deal(VisibleFaceup))
+		gs.Dealer.TakeCard(gs.Deal(VisibleFacedown))
+	}
+	// deal two cards to the bots, one face up and one face down
+	for i := 0; i < len(gs.Bots); i++ {
+		gs.Bots[i].TakeCard(gs.Deal(VisibleFaceup))
+		gs.Bots[i].TakeCard(gs.Deal(VisibleFacedown))
 	}
 	// print
 	fmt.Print(gs.Print())
 	// print probability
-	toTarget, toBust := gs.P.Probability.GetOdds(gs.P.Hand.Score)
+	toTarget, toBust := gs.Player.Probability.GetOdds(gs.Player.Hand.Score)
 	fmt.Printf("To Target: %.3f - To Bust: %.3f\n", toTarget, toBust)
 	// ask the player if he wants to hit or stand
 	playerStand := false
 	for {
-		fmt.Printf("Score: %v\n", gs.P.Hand.Score)
-		cmd := gs.P.GetPlayerChoice()
+		// player takes their turn
+		fmt.Printf("Score: %v\n", gs.Player.Hand.Score)
+		cmd := gs.Player.GetPlayerChoice()
 		switch cmd {
 		case CommandHit:
-			gs.P.TakeCard(gs.Deal(VisibleFaceup))
+			gs.Player.TakeCard(gs.Deal(VisibleFaceup))
 		case CommandStand:
 			playerStand = true
 		default:
@@ -69,32 +76,55 @@ func (gs *Gamestate) PlayRound() Result {
 			playerStand = true
 		}
 
+		// bots take their turn
+		for i := 0; i < len(gs.Bots); i++ {
+			if !gs.Bots[i].Standing {
+				cmd := gs.Bots[i].MakeChoice()
+				switch cmd {
+				case CommandHit:
+					gs.Bots[i].TakeCard(gs.Deal(VisibleFaceup))
+				case CommandStand:
+					gs.Bots[i].Standing = true
+				default:
+					fmt.Println("Default found in Play")
+					gs.Bots[i].Standing = true
+				}
+
+				if gs.Bots[i].IsBust() {
+					fmt.Printf("%s is bust!\n", gs.Bots[i].Name)
+					gs.Bots[i].Standing = true
+				}
+			}
+		}
+
 		fmt.Print(gs.Print())
 
-		if gs.P.IsBust() {
+		if gs.Player.IsBust() {
 			gs.FlipCards()
 			fmt.Print(gs.Print())
-			fmt.Printf("Bust! - %v\n", gs.P.Hand.Score)
+			fmt.Printf("Bust! - %v\n", gs.Player.Hand.Score)
 			return ResultLose
 		}
 		if playerStand {
 			break
 		}
+		toTarget, toBust := gs.Player.Probability.GetOdds(gs.Player.Hand.Score)
+		fmt.Printf("To Target: %.3f - To Bust: %.3f\n", toTarget, toBust)
 	}
 	// if hit, deal card, calc bust, check if lose
 	dealerStand := false
 	for {
-		cmd := gs.D.MakeChoice()
+		cmd := gs.Dealer.MakeChoice()
 		switch cmd {
 		case CommandHit:
-			gs.D.TakeCard(gs.Deal(VisibleFaceup))
+			gs.Dealer.TakeCard(gs.Deal(VisibleFaceup))
 		case CommandStand:
 			dealerStand = true
 		default:
 			fmt.Println("Default found in Play")
 			dealerStand = true
 		}
-		if gs.D.IsBust() {
+		if gs.Dealer.IsBust() {
 			gs.FlipCards()
 			fmt.Print(gs.Print())
 			fmt.Println("Dealer busts!")
@@ -107,15 +137,15 @@ func (gs *Gamestate) PlayRound() Result {
 	}
 	gs.FlipCards()
 	fmt.Print(gs.Print())
-	fmt.Printf("Score: %v\n", gs.P.Hand.Score)
+	fmt.Printf("Score: %v\n", gs.Player.Hand.Score)
 
 	return gs.CompareHands()
 }
 
 // todo: remove the print by returning a string and deciding what to do with it in the call
 func (gs *Gamestate) CompareHands() Result {
-	fmt.Printf("%v - %v\n", gs.P.Hand.Score, gs.D.Hand.Score)
-	switch cmp.Compare[int](gs.P.Hand.Score, gs.D.Hand.Score) {
+	fmt.Printf("%v - %v\n", gs.Player.Hand.Score, gs.Dealer.Hand.Score)
+	switch cmp.Compare[int](gs.Player.Hand.Score, gs.Dealer.Hand.Score) {
 	case -1:
 		return ResultLose
 	case 0:
