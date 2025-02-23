@@ -59,8 +59,9 @@ func (d *Deck) NewDeck() {
 }
 
 // deal cards
-func (d *Deck) Deal() Card {
+func (d *Deck) Deal(v Visible) Card {
 	c := d.Cards[d.TopCard]
+	c.Visible = v
 	d.TopCard++
 	return c
 }

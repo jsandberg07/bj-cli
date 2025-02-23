@@ -41,10 +41,13 @@ func PlayingPrint(gs *Gamestate) {
 func (gs *Gamestate) PlayRound() Result {
 
 	// deal two cards to the player
-	// deal two cards to the dealer
 	for i := 0; i < 2; i++ {
-		gs.P.TakeCard(gs.Deal())
-		gs.D.TakeCard(gs.Deal())
+		gs.P.TakeCard(gs.Deal(VisibleFaceup))
+	}
+	// deal two cards to the dealer, one face up and one face down
+	for i := 0; i < 1; i++ {
+		gs.D.TakeCard(gs.Deal(VisibleFaceup))
+		gs.D.TakeCard(gs.Deal(VisibleFacedown))
 	}
 	// print
 	fmt.Print(gs.Print())
@@ -58,7 +61,7 @@ func (gs *Gamestate) PlayRound() Result {
 		cmd := gs.P.GetPlayerChoice()
 		switch cmd {
 		case CommandHit:
-			gs.P.TakeCard(gs.Deal())
+			gs.P.TakeCard(gs.Deal(VisibleFaceup))
 		case CommandStand:
 			playerStand = true
 		default:
@@ -69,6 +72,8 @@ func (gs *Gamestate) PlayRound() Result {
 		fmt.Print(gs.Print())
 
 		if gs.P.IsBust() {
+			gs.FlipCards()
+			fmt.Print(gs.Print())
 			fmt.Printf("Bust! - %v\n", gs.P.Hand.Score)
 			return ResultLose
 		}
@@ -82,7 +87,7 @@ func (gs *Gamestate) PlayRound() Result {
 		cmd := gs.D.MakeChoice()
 		switch cmd {
 		case CommandHit:
-			gs.D.TakeCard(gs.Deal())
+			gs.D.TakeCard(gs.Deal(VisibleFaceup))
 		case CommandStand:
 			dealerStand = true
 		default:
@@ -90,6 +95,7 @@ func (gs *Gamestate) PlayRound() Result {
 			dealerStand = true
 		}
 		if gs.D.IsBust() {
+			gs.FlipCards()
 			fmt.Print(gs.Print())
 			fmt.Println("Dealer busts!")
 			return ResultWin
@@ -99,6 +105,7 @@ func (gs *Gamestate) PlayRound() Result {
 		}
 
 	}
+	gs.FlipCards()
 	fmt.Print(gs.Print())
 	fmt.Printf("Score: %v\n", gs.P.Hand.Score)
 

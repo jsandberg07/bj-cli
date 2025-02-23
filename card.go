@@ -29,9 +29,18 @@ const (
 	FaceKing
 )
 
+type Visible int
+
+// WELL it's more explicit (and verbose than bools)
+const (
+	VisibleFaceup Visible = iota
+	VisibleFacedown
+)
+
 type Card struct {
 	Suit
 	Face
+	Visible
 }
 
 func (c *Card) GetString() string {

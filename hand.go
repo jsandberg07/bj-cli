@@ -53,7 +53,11 @@ func (h *Hand) IsBust() bool {
 func (h *Hand) GetCards() string {
 	var output string
 	for _, c := range h.Cards {
-		output += c.GetString() + " "
+		if c.Visible == VisibleFaceup {
+			output += c.GetString() + " "
+		} else {
+			output += "XX" + " "
+		}
 	}
 	return strings.TrimSpace(output)
 }

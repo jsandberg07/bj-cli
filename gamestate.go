@@ -85,10 +85,19 @@ func (gs *Gamestate) CheckNextState() {
 	}
 }
 
-func (gs *Gamestate) Deal() Card {
-	card := gs.Deck.Deal()
-	gs.P.Probability.RemoveCard(card.GetValue())
+func (gs *Gamestate) Deal(v Visible) Card {
+	card := gs.Deck.Deal(v)
+	if v == VisibleFaceup {
+		gs.P.Probability.RemoveCard(card.GetValue())
+	}
 	return card
+}
+
+// OOP was a mistake
+func (gs *Gamestate) FlipCards() {
+	for i := 0; i < len(gs.D.Hand.Cards); i++ {
+		gs.D.Hand.Cards[i].Visible = VisibleFaceup
+	}
 }
 
 // lets create some states
