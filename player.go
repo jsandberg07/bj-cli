@@ -10,8 +10,7 @@ type Player struct {
 	Probability Probability
 	Name        string
 	Hand        Hand
-	GoalMet     bool
-	Goal        int
+	Stats       Stats
 	Money       int
 	Bet         int
 }
@@ -59,6 +58,7 @@ func (p *Player) Init(name string) {
 	p.Bet = 0
 	p.Hand.Init()
 	p.Probability.Init(1)
+	p.Stats.Init()
 }
 
 func (p *Player) Reset(numDecks int) {
@@ -93,21 +93,22 @@ func (p *Player) Print() []string {
 
 func (p *Player) Win() {
 	p.Money += 2 * p.Bet
+	p.Stats.Wins++
 	fmt.Println("You win!")
-	if !p.GoalMet {
-		if p.Money > p.Goal {
-			fmt.Println("Goal met! Congrats!")
-			p.GoalMet = true
-		}
+	met := p.Stats.CheckGoal(p.Money)
+	if met {
+		fmt.Println("Congrats on reaching your goal!")
 	}
 }
 
 func (p *Player) Draw() {
+	p.Stats.Draws++
 	fmt.Println("Draw!")
 }
 
 // add check to see if you lose all your cash then exit
 func (p *Player) Lose() {
 	p.Money -= p.Bet
+	p.Stats.Losses++
 	fmt.Println("You lose!")
 }

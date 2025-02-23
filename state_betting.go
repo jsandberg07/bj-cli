@@ -22,26 +22,35 @@ func BettingLogic(gs *Gamestate) {
 			fmt.Println(err)
 			continue
 		}
-		if input == "exit" {
-			gs.SetNextState(gs.GetExitState())
-			return
-		}
+
+		// try to handle as an int for a bet first
 		bet, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		if bet <= 0 {
-			fmt.Println("Can't wager nothing")
-			continue
-		}
-		if bet > gs.Player.Money {
-			fmt.Println("Can't wager more than you have")
-			continue
+		if err == nil {
+			if bet <= 0 {
+				fmt.Println("Can't wager nothing")
+				continue
+			}
+			if bet > gs.Player.Money {
+				fmt.Println("Can't wager more than you have")
+				continue
+			}
+
+			gs.Player.Bet = bet
+			break
 		}
 
-		gs.Player.Bet = bet
-		break
+		// if that doesn't work, try it as a word command
+		switch input {
+		case "exit":
+			gs.SetNextState(gs.GetExitState())
+			return
+
+		case "stats":
+			fmt.Println(gs.Player.Stats.PrintStats(gs.Player.Money))
+
+		default:
+			fmt.Println("Command not recognized")
+		}
 	}
 
 	gs.SetNextState(gs.GetPlayingState())

@@ -30,6 +30,26 @@ func mainMenuLogic(gs *Gamestate) {
 		}
 	}
 
+	fmt.Println("Enter goal for the player, or nothing to have no goal")
+	for {
+		num, err := getInput()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		if num == "" {
+			gs.Player.Stats.SetGoal(0)
+			break
+		}
+		goal, err := strconv.Atoi(num)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		gs.Player.Stats.SetGoal(goal)
+		break
+	}
+
 	fmt.Println("Enter number of bots")
 	for {
 		num, err := getInput()
@@ -67,28 +87,6 @@ func mainMenuLogic(gs *Gamestate) {
 			continue
 		}
 		gs.NumDecks = decks
-		break
-	}
-
-	fmt.Println("Enter goal for the player, or nothing to have no goal")
-	for {
-		num, err := getInput()
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		if num == "" {
-			gs.Player.Goal = 0
-			gs.Player.GoalMet = true
-			break
-		}
-		goal, err := strconv.Atoi(num)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		gs.Player.Goal = goal
-		gs.Player.GoalMet = false
 		break
 	}
 
