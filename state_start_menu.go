@@ -70,6 +70,28 @@ func mainMenuLogic(gs *Gamestate) {
 		break
 	}
 
+	fmt.Println("Enter goal for the player, or nothing to have no goal")
+	for {
+		num, err := getInput()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		if num == "" {
+			gs.Player.Goal = 0
+			gs.Player.GoalMet = true
+			break
+		}
+		goal, err := strconv.Atoi(num)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		gs.Player.Goal = goal
+		gs.Player.GoalMet = false
+		break
+	}
+
 	gs.SetNextState(gs.getNewGameState())
 }
 

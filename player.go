@@ -5,10 +5,13 @@ import (
 	"os"
 )
 
+// TODO: put goal in its own thing with its own checks, add the win count ect stats and you can check those
 type Player struct {
 	Probability Probability
 	Name        string
 	Hand        Hand
+	GoalMet     bool
+	Goal        int
 	Money       int
 	Bet         int
 }
@@ -66,6 +69,7 @@ func (p *Player) Reset(numDecks int) {
 // return lines that the game state will format
 // name
 // hand
+
 func (p *Player) Print() []string {
 	printName := p.Name
 	printCards := p.Hand.GetCards()
@@ -90,10 +94,15 @@ func (p *Player) Print() []string {
 func (p *Player) Win() {
 	p.Money += 2 * p.Bet
 	fmt.Println("You win!")
+	if !p.GoalMet {
+		if p.Money > p.Goal {
+			fmt.Println("Goal met! Congrats!")
+			p.GoalMet = true
+		}
+	}
 }
 
 func (p *Player) Draw() {
-	p.Money += p.Bet
 	fmt.Println("Draw!")
 }
 
