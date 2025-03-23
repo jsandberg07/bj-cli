@@ -8,12 +8,16 @@ import (
 func (gs *Gamestate) getBettingState() *State {
 	s := State{
 		Logic: BettingLogic,
-		Print: BettingPrint,
+		// Print: BettingPrint,
 	}
 	return &s
 }
 
 func BettingLogic(gs *Gamestate) {
+	if gs.Player.Money == 0 {
+		fmt.Println("You're out of money...")
+		gs.SetNextState(gs.GetExitState())
+	}
 	fmt.Printf("You have $%v\n", gs.Player.Money)
 	fmt.Println("Enter amount to bet, 'save', or 'exit'")
 	for {
@@ -63,9 +67,4 @@ func BettingLogic(gs *Gamestate) {
 	}
 
 	gs.SetNextState(gs.GetPlayingState())
-}
-
-func BettingPrint(gs *Gamestate) {
-	// TODO: add checks to make sure things are actually set lmao
-	fmt.Println("Set!")
 }

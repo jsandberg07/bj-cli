@@ -26,3 +26,13 @@ add a goal
 add guessing cards
 add help
 cleanup
+
+another note 
+so we have saving and loading
+on name entry, check for name.json. if there, ask if you want to load
+if not, just start
+at any time, save
+then:
+add player average bet tracking (use the cool small average, maybe min and max too, just to stats and easy to add to save)
+actually getting and tracking blackjack with payout
+losing (having 0 bucks)

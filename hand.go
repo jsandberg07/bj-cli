@@ -8,6 +8,7 @@ const (
 	CommandHit Command = iota
 	CommandStand
 	CommandSurrender
+	CommandBlackjack
 )
 
 type Hand struct {

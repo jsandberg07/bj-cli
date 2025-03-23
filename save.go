@@ -2,40 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
-
-// add a goal first
-func Fart() {
-	fmt.Println("Pffrrtt.....")
-}
-
-// things to save
-// name
-// number of bots
-// number of decks
-// goal
-// money
-// stats
-// i dunno everything
-// just give it all a .save() and .load()
-// when you get back from your walk
-// ahh it wasn't typing cause i didn't have the window selected
-
-// create a .json file
-// save a .json file
-// load a json file
-// start putting data into it
-// figure out how to structure things once you take it out
-// saving is figuring out how to put everything into a struct
-// loading is unpacking it
-// game state needs to create a struct based on the player
-// dealer
-// bots (kinda)
-// deck (kinda)
-// mostly player
-// so focus on that
 
 type PlayerData struct {
 	Name  string

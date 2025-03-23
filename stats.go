@@ -7,8 +7,10 @@ type Stats struct {
 	Draws      int
 	Losses     int
 	Blackjacks int
-	Goal       int
-	GoalMet    bool
+	// TODO: add back in but also add it to saving+loading
+	// AverageBet AverageBet
+	Goal    int
+	GoalMet bool
 }
 
 func (s *Stats) Init() {

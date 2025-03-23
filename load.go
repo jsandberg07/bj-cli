@@ -31,6 +31,7 @@ type LoadData struct {
 
 func (gs *Gamestate) Load(name string) error {
 	filename := name + ".json"
+	// don't need to close if using ReadFile
 	dat, err := os.ReadFile(filename)
 	if err != nil {
 		return err

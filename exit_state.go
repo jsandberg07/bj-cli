@@ -3,7 +3,7 @@ package main
 func (gs *Gamestate) GetExitState() *State {
 	s := State{
 		Logic: ExitLogic,
-		Print: ExitPrint,
+		// Print: ExitPrint,
 	}
 
 	return &s
@@ -11,8 +11,4 @@ func (gs *Gamestate) GetExitState() *State {
 
 func ExitLogic(gs *Gamestate) {
 	gs.Playing = false
-}
-
-func ExitPrint(gs *Gamestate) {
-	// nothing again
 }

@@ -68,9 +68,10 @@ func (d *Deck) NewDeck(numDecks int) {
 	d.Cards = decks
 }
 
-// deal cards
 func (d *Deck) Deal(v Visible) Card {
 	// out of cards check. just return THE ONLY CARD I NEED ITS THE ACE OF SPACES THE ACE OF SPADES
+	// requiring a certain min amount of decks for bots + probability means this shouldn't happen
+	// but, you know, out of bounds indexing
 	if d.TopCard == len(d.Cards) {
 		return Card{
 			Suit:    SuitSpade,

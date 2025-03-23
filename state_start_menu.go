@@ -11,7 +11,7 @@ const BotsPerDeck = 4
 func (gs *Gamestate) getMainMenuState() *State {
 	s := State{
 		Logic: mainMenuLogic,
-		Print: mainMenuPrint,
+		// Print: mainMenuPrint,
 	}
 	return &s
 }
@@ -128,8 +128,4 @@ func mainMenuLogic(gs *Gamestate) {
 	}
 
 	gs.SetNextState(gs.getNewGameState())
-}
-
-func mainMenuPrint(gs *Gamestate) {
-	// literally does nothing
 }

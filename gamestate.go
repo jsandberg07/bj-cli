@@ -4,6 +4,9 @@ import "fmt"
 
 const scoreTarget = 21
 
+// blackjack pays out 3/2 (or can be changed to 6/5 or something)
+const blackjackPayout float64 = (3.0 / 2.0)
+
 type Result int
 
 const (
@@ -15,17 +18,10 @@ const (
 	ResultError
 )
 
-// blackjack pays 3 to 2
-
-// state needs properties
-// logic
-// just use state enum and a switch
-// everything else can be kept and changed as needed
-// and the state just points to the logic and render
-
 type State struct {
 	Logic func(gs *Gamestate)
-	Print func(gs *Gamestate)
+	// removed because it was anticipated to be used but most functions were just empty
+	// Print func(gs *Gamestate)
 }
 
 type Gamestate struct {
@@ -60,7 +56,6 @@ func (gs *Gamestate) Reset() {
 func (gs *Gamestate) Run() {
 	for {
 		gs.Logic()
-		gs.Print()
 		gs.CheckNextState()
 		if !gs.Playing {
 			return
@@ -69,9 +64,7 @@ func (gs *Gamestate) Run() {
 
 }
 
-// how do we format it
-// figure that out, and how to transplant strings
-func (gs *Gamestate) Print() string {
+func (gs *Gamestate) PrintTable() string {
 	p := [][]string{}
 	p = append(p, gs.Player.Print())
 	p = append(p, gs.Dealer.Print())
@@ -83,7 +76,7 @@ func (gs *Gamestate) Print() string {
 }
 
 func (gs *Gamestate) SetNextState(s *State) {
-	fmt.Println()
+	// fmt.Println()
 	gs.NS = s
 }
 
@@ -102,9 +95,8 @@ func (gs *Gamestate) Deal(v Visible) Card {
 	return card
 }
 
-// OOP was a mistake
-// OOP WAS A MISTAKE. Make literally every . something a function lmao
-func (gs *Gamestate) FlipCards() {
+// string return is just to break up visuals
+func (gs *Gamestate) FlipCards() string {
 	for i := 0; i < len(gs.Dealer.Hand.Cards); i++ {
 		gs.Dealer.Hand.Cards[i].Visible = VisibleFaceup
 	}
@@ -113,6 +105,7 @@ func (gs *Gamestate) FlipCards() {
 			gs.Bots[i].Hand.Cards[j].Visible = VisibleFaceup
 		}
 	}
+	return "Flip!"
 }
 
 // lets create some states

@@ -52,6 +52,9 @@ func (p *Player) GetPlayerChoice() Command {
 			fallthrough
 		case "q":
 			return CommandSurrender
+			// forcing a blackjack for testing
+		case "bj":
+			return CommandBlackjack
 
 		default:
 			fmt.Println("Unrecognized command")
@@ -121,7 +124,7 @@ func (p *Player) Lose() {
 }
 
 func (p *Player) Blackjack() {
-	p.Money += int((3 * p.Bet / 2))
+	p.Money += int(float64(p.Bet) * blackjackPayout)
 	p.Stats.Wins++
 	p.Stats.Blackjacks++
 	fmt.Println("Blackjack!")

@@ -126,7 +126,7 @@ func TestPrintingPlayers(t *testing.T) {
 	gs.Dealer.TakeCard(cards[3])
 
 	// better to go line by line
-	output := gs.Print()
+	output := gs.PrintTable()
 	splitOutput := strings.Split(output, "\n")
 	expected := "|Player|Dealer|\n|AS 2D |3H 4C |\n"
 	splitExpected := strings.Split(expected, "\n")
@@ -192,7 +192,7 @@ func TestPrintingBots(t *testing.T) {
 	gs.Bots[1].TakeCard(cards[6])
 	gs.Bots[1].TakeCard(cards[7])
 
-	output := gs.Print()
+	output := gs.PrintTable()
 	splitOutput := strings.Split(output, "\n")
 	expected := "|Player|Dealer|Bot 1|Bot 2|\n|AS 2D |3H 4C |5S 6D|7H 8C|\n"
 	splitExpected := strings.Split(expected, "\n")

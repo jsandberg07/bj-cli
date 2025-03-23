@@ -9,7 +9,7 @@ import (
 func (gs *Gamestate) GetPlayingState() *State {
 	s := State{
 		Logic: PlayingLogic,
-		Print: PlayingPrint,
+		// Print: PlayingPrint,
 	}
 	return &s
 }
@@ -38,10 +38,6 @@ func PlayingLogic(gs *Gamestate) {
 
 }
 
-func PlayingPrint(gs *Gamestate) {
-
-}
-
 // TODO: encapsulate behavior in like player.turn() and bot.turn()
 func (gs *Gamestate) PlayRound() Result {
 
@@ -60,7 +56,7 @@ func (gs *Gamestate) PlayRound() Result {
 		gs.Bots[i].TakeCard(gs.Deal(VisibleFacedown))
 	}
 	// print
-	fmt.Print(gs.Print())
+	fmt.Print(gs.PrintTable())
 	// check if dealer or player has blackjack
 	playerBJ := gs.Player.Hand.HasBlackjack()
 	dealerBJ := gs.Player.Hand.HasBlackjack()
@@ -76,7 +72,7 @@ func (gs *Gamestate) PlayRound() Result {
 
 	// print probability
 	toTarget, toBust := gs.Player.Probability.GetOdds(gs.Player.Hand.Score)
-	fmt.Printf("To Target: %.3f - To Bust: %.3f\n", toTarget, toBust)
+	fmt.Printf("To Target: %.2f%% - To Bust: %.2f%%\n", toTarget*100, toBust*100)
 	// ask the player if he wants to hit or stand
 	playerStand := false
 	startingHand := true
@@ -95,7 +91,10 @@ func (gs *Gamestate) PlayRound() Result {
 				fmt.Println("Can only surrender on starting hand")
 				continue
 			}
+			fmt.Println("Surrendering...")
 			return ResultSurrender
+		case CommandBlackjack:
+			return ResultBlackjack
 		default:
 			fmt.Println("Default found in Play")
 			playerStand = true
@@ -122,11 +121,11 @@ func (gs *Gamestate) PlayRound() Result {
 			}
 		}
 
-		fmt.Print(gs.Print())
+		fmt.Print(gs.PrintTable())
 
 		if gs.Player.IsBust() {
-			gs.FlipCards()
-			fmt.Print(gs.Print())
+			fmt.Println(gs.FlipCards())
+			fmt.Print(gs.PrintTable())
 			fmt.Printf("Bust! - %v\n", gs.Player.Hand.Score)
 			return ResultLose
 		}
@@ -134,7 +133,7 @@ func (gs *Gamestate) PlayRound() Result {
 			break
 		}
 		toTarget, toBust := gs.Player.Probability.GetOdds(gs.Player.Hand.Score)
-		fmt.Printf("To Target: %.3f - To Bust: %.3f\n", toTarget, toBust)
+		fmt.Printf("To Target: %.2f%% - To Bust: %.2f%%\n", toTarget*100, toBust*100)
 	}
 	// if hit, deal card, calc bust, check if lose
 	dealerStand := false
@@ -150,8 +149,8 @@ func (gs *Gamestate) PlayRound() Result {
 			dealerStand = true
 		}
 		if gs.Dealer.IsBust() {
-			gs.FlipCards()
-			fmt.Print(gs.Print())
+			fmt.Println(gs.FlipCards())
+			fmt.Print(gs.PrintTable())
 			fmt.Println("Dealer busts!")
 			return ResultWin
 		}
@@ -160,8 +159,8 @@ func (gs *Gamestate) PlayRound() Result {
 		}
 
 	}
-	gs.FlipCards()
-	fmt.Print(gs.Print())
+	fmt.Println(gs.FlipCards())
+	fmt.Print(gs.PrintTable())
 	fmt.Printf("Score: %v\n", gs.Player.Hand.Score)
 
 	return gs.CompareHands()
@@ -170,7 +169,7 @@ func (gs *Gamestate) PlayRound() Result {
 // todo: remove the print by returning a string and deciding what to do with it in the call
 func (gs *Gamestate) CompareHands() Result {
 	fmt.Printf("%v - %v\n", gs.Player.Hand.Score, gs.Dealer.Hand.Score)
-	switch cmp.Compare[int](gs.Player.Hand.Score, gs.Dealer.Hand.Score) {
+	switch cmp.Compare(gs.Player.Hand.Score, gs.Dealer.Hand.Score) {
 	case -1:
 		return ResultLose
 	case 0:
