@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func (gs *Gamestate) getMainMenuState() *State {
@@ -14,7 +15,7 @@ func (gs *Gamestate) getMainMenuState() *State {
 }
 
 func mainMenuLogic(gs *Gamestate) {
-	fmt.Println("Enter player name")
+	fmt.Println("Enter player name. Enter name of save file to load")
 	for {
 		name, err := getInput()
 		if err != nil {
@@ -24,10 +25,30 @@ func mainMenuLogic(gs *Gamestate) {
 		if name == "" {
 			fmt.Println("No name found")
 			continue
-		} else {
-			gs.Player.Init(name)
-			break
 		}
+
+		// try to load. if file not found, start new game with name
+		err = gs.Load(name)
+		if err != nil && !strings.Contains(err.Error(), "no such file or directory") {
+			// any other error other than file not being found, exit
+			fmt.Println(err)
+			gs.SetNextState(gs.GetExitState())
+			return
+		}
+		// file found and load successful
+		if err == nil {
+			err := gs.CleanSave()
+			if err != nil {
+				fmt.Println("Error cleaning save file")
+				fmt.Println(err)
+			}
+			gs.SetNextState(gs.getNewGameState())
+			return
+		}
+
+		gs.Player.Init(name)
+		break
+
 	}
 
 	fmt.Println("Enter goal for the player, or nothing to have no goal")

@@ -15,7 +15,7 @@ func (gs *Gamestate) getBettingState() *State {
 
 func BettingLogic(gs *Gamestate) {
 	fmt.Printf("You have $%v\n", gs.Player.Money)
-	fmt.Println("Enter amount to bet or 'exit' to quit")
+	fmt.Println("Enter amount to bet, 'save', or 'exit'")
 	for {
 		input, err := getInput()
 		if err != nil {
@@ -42,6 +42,11 @@ func BettingLogic(gs *Gamestate) {
 		// if that doesn't work, try it as a word command
 		switch input {
 		case "exit":
+			gs.SetNextState(gs.GetExitState())
+			return
+
+		case "save":
+			gs.Save()
 			gs.SetNextState(gs.GetExitState())
 			return
 
