@@ -70,6 +70,14 @@ func (d *Deck) NewDeck(numDecks int) {
 
 // deal cards
 func (d *Deck) Deal(v Visible) Card {
+	// out of cards check. just return THE ONLY CARD I NEED ITS THE ACE OF SPACES THE ACE OF SPADES
+	if d.TopCard == len(d.Cards) {
+		return Card{
+			Suit:    SuitSpade,
+			Face:    FaceAce,
+			Visible: v,
+		}
+	}
 	c := d.Cards[d.TopCard]
 	c.Visible = v
 	d.TopCard++
