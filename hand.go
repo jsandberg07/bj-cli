@@ -7,6 +7,7 @@ type Command int
 const (
 	CommandHit Command = iota
 	CommandStand
+	CommandSurrender
 )
 
 type Hand struct {
@@ -60,4 +61,12 @@ func (h *Hand) GetCards() string {
 		}
 	}
 	return strings.TrimSpace(output)
+}
+
+func (h *Hand) HasBlackjack() bool {
+	if h.Score == scoreTarget {
+		return true
+	} else {
+		return false
+	}
 }

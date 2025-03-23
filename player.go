@@ -46,6 +46,13 @@ func (p *Player) GetPlayerChoice() Command {
 		case "h":
 			fmt.Println("hit")
 			return CommandHit
+		case "surrender":
+			fallthrough
+		case "quit":
+			fallthrough
+		case "q":
+			return CommandSurrender
+
 		default:
 			fmt.Println("Unrecognized command")
 		}
@@ -111,4 +118,19 @@ func (p *Player) Lose() {
 	p.Money -= p.Bet
 	p.Stats.Losses++
 	fmt.Println("You lose!")
+}
+
+func (p *Player) Blackjack() {
+	p.Money += int((3 * p.Bet / 2))
+	p.Stats.Wins++
+	p.Stats.Blackjacks++
+	fmt.Println("Blackjack!")
+	met := p.Stats.CheckGoal(p.Money)
+	if met {
+		fmt.Println("Congrats on reaching your goal!")
+	}
+}
+
+func (p *Player) Surrender() {
+	p.Money -= int(p.Bet / 2)
 }

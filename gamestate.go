@@ -10,6 +10,8 @@ const (
 	ResultWin Result = iota
 	ResultDraw
 	ResultLose
+	ResultBlackjack
+	ResultSurrender
 	ResultError
 )
 

@@ -46,7 +46,11 @@ func BettingLogic(gs *Gamestate) {
 			return
 
 		case "save":
-			gs.Save()
+			err := gs.Save()
+			if err != nil {
+				fmt.Println("Error saving")
+				fmt.Println(err)
+			}
 			gs.SetNextState(gs.GetExitState())
 			return
 

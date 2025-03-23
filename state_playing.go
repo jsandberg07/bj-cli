@@ -23,6 +23,10 @@ func PlayingLogic(gs *Gamestate) {
 		gs.Player.Draw()
 	case ResultLose:
 		gs.Player.Lose()
+	case ResultBlackjack:
+		gs.Player.Blackjack()
+	case ResultSurrender:
+		gs.Player.Surrender()
 	default:
 		fmt.Println("Default in playing logic!")
 		os.Exit(1)
@@ -57,20 +61,41 @@ func (gs *Gamestate) PlayRound() Result {
 	}
 	// print
 	fmt.Print(gs.Print())
+	// check if dealer or player has blackjack
+	playerBJ := gs.Player.Hand.HasBlackjack()
+	dealerBJ := gs.Player.Hand.HasBlackjack()
+	if playerBJ && dealerBJ {
+		return ResultDraw
+	}
+	if dealerBJ {
+		return ResultLose
+	}
+	if playerBJ {
+		return ResultBlackjack
+	}
+
 	// print probability
 	toTarget, toBust := gs.Player.Probability.GetOdds(gs.Player.Hand.Score)
 	fmt.Printf("To Target: %.3f - To Bust: %.3f\n", toTarget, toBust)
 	// ask the player if he wants to hit or stand
 	playerStand := false
+	startingHand := true
 	for {
 		// player takes their turn
 		fmt.Printf("Score: %v\n", gs.Player.Hand.Score)
 		cmd := gs.Player.GetPlayerChoice()
 		switch cmd {
 		case CommandHit:
+			startingHand = false
 			gs.Player.TakeCard(gs.Deal(VisibleFaceup))
 		case CommandStand:
 			playerStand = true
+		case CommandSurrender:
+			if !startingHand {
+				fmt.Println("Can only surrender on starting hand")
+				continue
+			}
+			return ResultSurrender
 		default:
 			fmt.Println("Default found in Play")
 			playerStand = true

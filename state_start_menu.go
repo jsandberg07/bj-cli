@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const BotsPerDeck = 4
+
 func (gs *Gamestate) getMainMenuState() *State {
 	s := State{
 		Logic: mainMenuLogic,
@@ -24,6 +26,11 @@ func mainMenuLogic(gs *Gamestate) {
 		}
 		if name == "" {
 			fmt.Println("No name found")
+			continue
+		}
+		// creating a file with a slash is a bad idea!
+		if strings.Contains(name, "/") {
+			fmt.Println("Names cannot contain /")
 			continue
 		}
 
@@ -107,6 +114,15 @@ func mainMenuLogic(gs *Gamestate) {
 			fmt.Println(err)
 			continue
 		}
+		if decks == 0 {
+			gs.NumDecks = 1
+			break
+		}
+		if decks < (len(gs.Bots)/BotsPerDeck + 1) {
+			fmt.Printf("For %v bots, at least %v decks are required\n", len(gs.Bots), (len(gs.Bots)/BotsPerDeck + 1))
+			continue
+		}
+
 		gs.NumDecks = decks
 		break
 	}
