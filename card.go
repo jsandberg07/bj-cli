@@ -31,7 +31,6 @@ const (
 
 type Visible int
 
-// WELL it's more explicit (and verbose than bools)
 const (
 	VisibleFaceup Visible = iota
 	VisibleFacedown

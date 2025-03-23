@@ -6,7 +6,7 @@ type Bot struct {
 	Standing bool
 }
 
-// can make adjustable with composed logic later
+// can make individual / adjustable with composed logic later
 func (b *Bot) MakeChoice() Command {
 	if b.Hand.Score < dealerTarget {
 		return CommandHit
