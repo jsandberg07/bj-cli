@@ -6,17 +6,6 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-// how to do probability
-// dont need each and every card
-// can you change a maps values and is that faster
-// put in an int, return an int
-// put in the value of a card, return the number left
-// accessing maps is fast
-// so you do the value to get 21, and the sum of the values out of the total
-// is it fast to sum up a map like that or is there a better way
-// keep the total as a separate value or you're already summing most numbers anyway
-// just do the map
-
 type Probability struct {
 	// possibly better using the enum, but those dont have inherent values
 	CardsLeft map[int]int
@@ -27,9 +16,6 @@ func (p *Probability) Init(numDecks int) {
 	p.Reset(1)
 }
 
-// pass in number of decks for 52 * that
-// it's a deck of cards, it's ok to hard code
-// think about how to say "if you get an ace it'll be ok"
 func (p *Probability) Reset(numOfDecks int) {
 	maps.Clear(p.CardsLeft)
 	p.CardsLeft[11] = 4 * numOfDecks
